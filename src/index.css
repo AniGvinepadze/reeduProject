@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: "Jost";
+  src: url("/assets/fonts/Jost-VariableFont_wght.ttf");
+}
+#root,
+body {
+  @apply font-jost bg-lightGrey antialiased;
+}
+.container {
+  @apply mx-auto max-w-[1120px] px-2.5;
+}
+.sidebarGradient {
+  background: rgb(232, 77, 112);
+  background: radial-gradient(
+    circle,
+    rgba(232, 77, 112, 1) 0%,
+    rgba(163, 55, 246, 1) 53%,
+    rgba(40, 167, 237, 1) 100%
+  );
+}
+
+.menu-btn {
+  @apply relative flex justify-center items-center cursor-pointer transition-all h-[17px] w-[20px] duration-500 ease-in-out transform;
+}
+
+.menu-btn_burger {
+  @apply w-[20px] h-[3px] bg-white  duration-500 ease-in-out transform;
+}
+.menu-btn_burger::before,
+.menu-btn_burger::after {
+  @apply content-[''] absolute w-[20px] h-[3px] bg-white  transition-all duration-500 ease-in-out;
+}
+.menu-btn_burger::before {
+  @apply translate-y-[-6px];
+}
+
+.menu-btn_burger::after {
+  @apply translate-y-[6px];
+}
+
+.menu-btn.open .menu-btn_burger {
+  @apply bg-transparent rotate-90 duration-500 ease-in-out transform;
+}
+.menu-btn.open .menu-btn_burger::before {
+  transform: rotate(45deg);
+}
+.menu-btn.open .menu-btn_burger::after {
+  transform: rotate(-45deg);
+}
+.mobileMenuHeight {
+  @apply h-[calc(100vh-72px)];
+}
+
+.input-form {
+  width: 100%;
+  padding-left: 16px;
+  border-radius: 5px;
+  background-color: #f7f8fd;
+}
+
+.input-active {
+  border: 1px solid #4661e6 !important;
+  outline: none;
+}
+
+.form-button {
+  height: 40px;
+  max-width: 93px;
+  width: 100%;
+  border-radius: 10px;
+  color: #f2f4ff;
+}
