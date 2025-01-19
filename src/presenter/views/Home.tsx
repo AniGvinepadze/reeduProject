@@ -15,23 +15,28 @@ type User = {
 
 const cookies = new Cookies();
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const cookes = new Cookies();
+  const token: string = cookes.get('accessToken');
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = cookies.get('accessToken');
-      if (token) {
-        const fetchedUser = await getUser(token, navigate);
-        if (fetchedUser) setUser(fetchedUser); // Update state with fetched user
-      } else {
-        navigate('/auth/sign-in'); // Redirect if token is missing
+    const getCurrentUser = async (token: string) => {
+      try {
+        const res = await axios.get('http://localhost:3000/auth/current-user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (error) {
+        navigate('/auth/sign-in');
       }
     };
 
-    fetchUser();
-  }, [navigate]);
+    getCurrentUser(token);
+  }, [token]);
 
   if (!user) return null;
 
