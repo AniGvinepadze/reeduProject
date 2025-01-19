@@ -44,7 +44,7 @@ export default function Home() {
       </div>
       <div className='flex items-start mt-10  gap-[30px] max-900:flex-col max-650:mt-0 max-650:gap-0'>
         <section className='flex w-[255px]  max-900:max-w-[700px] max-900:w-full '>
-          <Sidebar />
+          <Sidebar setSelectedCategory={setSelectedCategory} />
         </section>
         <div className='flex-1 max-900:w-full'>
           <Suggestion selectedCategory={selectedCategory} />

@@ -4,7 +4,11 @@ import Categories from './Categories';
 import MobileMenu from './MobileMenu';
 import Roadmap from './Roadmap';
 import { useState, useEffect } from 'react';
-export default function Sidebar() {
+export default function Sidebar({
+  setSelectedCategory,
+}: {
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useEffect(() => {
     if (isMenuOpen) {
@@ -37,7 +41,7 @@ export default function Sidebar() {
         </div>
       </div>
       <section className='max-650:hidden'>
-        <Categories />
+        <Categories setSelectedCategory={setSelectedCategory} />
       </section>
       <section className='max-650:hidden'>
         <Roadmap />
