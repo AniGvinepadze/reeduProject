@@ -6,9 +6,12 @@ import EditFeedBackPage from "../views/EditFeedBackPage";
 import FeedbackDetails from "../views/FeedbackDetails";
 import SignUp from "./molecules/authFont/SignUp";
 import SignIn from "./molecules/authFont/SignIn";
+import { SuggestionsProvider } from "../../../context";
 
 export default function AppRoute() {
+
   return (
+    <SuggestionsProvider>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/roadmap" element={<RoadMap />} />
@@ -19,5 +22,6 @@ export default function AppRoute() {
       <Route path="/auth/sign-up" element={<SignUp/>} />
       <Route path="/auth/sign-in" element={<SignIn/>} />
     </Routes>
+    </SuggestionsProvider>
   );
 }

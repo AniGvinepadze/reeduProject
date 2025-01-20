@@ -8,7 +8,7 @@ import GoBack from "../molecules/newFeedback/GoBack";
 import Button from "./button";
 
 type SuggestionListProps = {
-  suggestion: Suggestion | undefined;
+  suggestion: any;
 };
 
 export default function FeedBackCommentarsHeader({
@@ -87,7 +87,7 @@ export default function FeedBackCommentarsHeader({
             <div className="flex items-center -mt-3 max-450:mt-0">
               <img src={message} alt="message" className="w-[42px] h-9  pl-6" />
               <p className="text-mediumBlue font-bold text-base px-3">
-                {suggestion?.comments.length}
+                {suggestion?.comments?.length}
               </p>
             </div>
           </div>

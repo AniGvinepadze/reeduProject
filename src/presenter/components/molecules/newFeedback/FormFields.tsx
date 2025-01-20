@@ -16,7 +16,7 @@ export type FormData = {
 type SuggestionListProps = {
   suggestion: Suggestion | undefined;
 };
-export default function FormFields({ suggestion }: SuggestionListProps) {
+export default function FormFields({ suggestion }: any) {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupSec, setShowPopupSec] = useState(false);
   const [placeholder, setPlaceholder] = useState("Feature");
@@ -86,7 +86,6 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
 
   const onSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
-    token: string
   ) => {
     e.preventDefault();
 
@@ -117,6 +116,7 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
 
   const handleDelete = async (id: string, token: string) => {
     try {
+      console.log("clicked");
       const res = await axios.delete(`http://localhost:3000/posts/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -130,7 +130,7 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
 
   return (
     <>
-      <main className="text-darkBlue">
+      <main className="text-darkBlue s">
         <div className="flex">
           <img src={arrowLeftIcon} alt="arrow" className="mr-3" />
           <Link to="/" className="font-bold text-sm">
@@ -139,8 +139,8 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
         </div>
 
         <form
-          onSubmit={(e) => onSubmit(e, "your_token_here")}
-          className="max-w-[540px] w-full p-8 rounded-[10px] bg-white my-24"
+          onSubmit={onSubmit}
+          className="max-w-[540px] w-full p-8 rounded-[10px] bg-white my-24 shadow-md"
         >
           <div className="relative">
             <img
@@ -245,8 +245,9 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
           <div className="flex align-bottom max-650:flex-col-reverse mt-8">
             <button
               type="button"
-              className="bg-red border-none form-button"
+              className="bg-blue border-none form-button"
               onClick={() => {
+                console.log(suggestion, "suggedtion on click");
                 if (suggestion && suggestion._id) {
                   handleDelete(suggestion._id, "your_token_here");
                 }

@@ -123,7 +123,7 @@ export default function FeedBackForm() {
                 onClick={() => {
                   handleSelectOption(option);
                   setValue('category', option, { shouldValidate: true });
-                }} //
+                }} 
                 className='hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer  '
               >
                 <p className='p-3'>{option}</p>
