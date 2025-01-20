@@ -59,7 +59,7 @@ export default function SuggestionHeader() {
     }
   };
   return (
-    <header className='w-full rounded-[10px] bg-darkBlue text-white flex justify-between items-center p-4 max-400:p-3  max-650:rounded-none max-650:h-[60px]'>
+    <header className='w-full rounded-[10px] bg-darkBlue text-white flex justify-between items-center p-4 max-400:p-3  max-650:rounded-none max-650:h-[60px] shadow-md'>
       <div className='flex justify-between '>
         <div className='flex max-650:hidden'>
           <img

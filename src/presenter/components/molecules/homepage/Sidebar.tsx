@@ -23,7 +23,7 @@ export default function Sidebar({
   }, [isMenuOpen]);
   return (
     <div className='w-full flex flex-col gap-6 max-900:flex-row max-900:gap-2.5  '>
-      <div className='rounded-[10px] w-full h-[137px] p-6 flex flex-col max-650:flex-row justify-end max-650:justify-between max-650:items-center sidebarGradient max-900:w-[280px] max-900:h-[178px] max-900:p-4 max-650:w-full max-650:h-[72px] max-650:rounded-none'>
+      <div className='rounded-[10px] w-full h-[137px] p-6 shadow-md flex flex-col max-650:flex-row justify-end max-650:justify-between max-650:items-center sidebarGradient max-900:w-[280px] max-900:h-[178px] max-900:p-4 max-650:w-full max-650:h-[72px] max-650:rounded-none'>
         <div className='flex-col'>
           <h2 className='text-xl font-bold text-white'>Frontend Mentor</h2>
           <p className='text-[15px] font-medium text-white'>Feedback Board</p>

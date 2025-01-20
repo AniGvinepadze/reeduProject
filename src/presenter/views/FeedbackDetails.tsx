@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
-import DetailsHeader from "../components/molecules/feedbackDetails/DetailsHeader";
+
 import Details from "../components/molecules/feedbackDetails/Details";
+import DetailsHeader from "../components/molecules/feedbackDetails/DetailsHeader";
 
 export default function FeedbackDetails() {
   const params = useParams();

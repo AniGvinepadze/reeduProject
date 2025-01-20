@@ -101,7 +101,7 @@ export default function Categories({
   };
 
   return (
-    <div className='bg-white p-6 rounded-[10px] flex flex-wrap gap-x-2 gap-y-3.5 max-900:max-w-[263px] max-900:h-[178px]'>
+    <div className='bg-white p-6 rounded-[10px] shadow-md flex flex-wrap gap-x-2 gap-y-3.5 max-900:max-w-[263px] max-900:h-[178px]'>
       {categories.map((category) => {
         const isActive = active === category.name;
         return (

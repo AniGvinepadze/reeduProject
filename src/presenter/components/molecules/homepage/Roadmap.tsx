@@ -20,7 +20,7 @@ export default function Roadmap() {
     },
   ];
   return (
-    <div className="bg-white px-6 py-5 rounded-[10px] flex flex-wrap gap-x-2 gap-y-3.5 max-900:h-[178px] ">
+    <div className="bg-white px-6 py-5 rounded-[10px] flex flex-wrap gap-x-2 gap-y-3.5 max-900:h-[178px] shadow-md ">
       <div className="flex items-center justify-between w-full">
         <h2 className="text-lg font-bold text-mediumBlue ">Roadmap</h2>
         <Link

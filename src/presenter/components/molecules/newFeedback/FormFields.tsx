@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { arrowLeftIcon } from "../../../assets";
 import { editSign } from "../../../assets";
+import { Suggestion } from "../../../../../context";
 
 export type FormData = {
   title: string;
@@ -12,16 +13,19 @@ export type FormData = {
   _v: number;
   _id: string;
 };
+type SuggestionListProps = {
+  suggestion: Suggestion | undefined;
+};
 
-export default function FormFields() {
+export default function FormFields({ suggestion }: SuggestionListProps) {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupSec, setShowPopupSec] = useState(false);
 
   const [placeholder, setPlaceholder] = useState("Feature");
   const [placeholderSec, setPlaceholderSec] = useState("Planned");
 
-  const [feedbacks, setFeedbacks] = useState<FormData[]>([]);
-  const [feedback, setFeedback] = useState<FormData | null>(null);
+  const [feedbacks, setFeedbacks] = useState<Suggestion[]>([]);
+  const [feedback, setFeedback] = useState<Suggestion | null>(null);
   const [inputData, setInputData] = useState({
     title: "",
     category: "",
@@ -47,22 +51,21 @@ export default function FormFields() {
     setShowPopupSec(false);
   };
 
-  const getData = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/feedback");
-      setFeedbacks(res.data);
-    } catch (error) {
-      console.error("Error fetching feedbacks:", error);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
+  // const getData = async (id: string) => {
+  //   try {
+  //     const res = await axios.get(`http://localhost:3000/posts/${id}`);
+  //     setFeedbacks(res.data);
+  //   } catch (error) {
+  //     console.error("Error fetching feedbacks:", error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await axios.delete(`http://localhost:3000/feedback/${id}`);
+      const res = await axios.delete(`http://localhost:3000/posts/${id}`);
       setFeedbacks(res.data);
     } catch (error) {
       console.error("Error deleting feedback:", error);
@@ -71,7 +74,7 @@ export default function FormFields() {
 
   const handleUpdate = async (id: string) => {
     try {
-      const res = await axios.get(`http://localhost:3000/feedback/${id}`);
+      const res = await axios.get(`http://localhost:3000/posts/${id}`);
       setFeedback(res.data);
       setInputData({
         title: res.data.title || "",
@@ -79,7 +82,7 @@ export default function FormFields() {
         details: res.data.details || "",
         status: res.data.status || "",
       });
-      console.log("deleeted feedback", res.data);
+      console.log("upddated feedback", res.data);
     } catch (error) {
       console.error("Error fetching feedback for update:", error);
     }
@@ -96,13 +99,13 @@ export default function FormFields() {
     if (feedback && feedback._id) {
       try {
         const res = await axios.put(
-          `http://localhost:3000/feedback/${feedback._id}`,
+          `http://localhost:3000/posts/${feedback._id}`,
           {
             ...inputData,
           }
         );
         console.log("Feedback updated:", res.data);
-        getData();
+        // getData();
       } catch (error) {
         console.error("Error updating feedback:", error);
       }
@@ -150,8 +153,6 @@ export default function FormFields() {
             />
           </div>
 
-          {/* field 2 */}
-
           <div className="relative">
             <p className="font-bold text-sm m-2 mt-6">Category</p>
             <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
@@ -173,7 +174,7 @@ export default function FormFields() {
                 {options.map((option) => (
                   <div
                     key={option}
-                    onClick={() => handleSelectOption(option)} //
+                    onClick={() => handleSelectOption(option)}
                     className="hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer  "
                   >
                     <p className="p-3">{option}</p>
@@ -216,7 +217,6 @@ export default function FormFields() {
             )}
           </div>
 
-          {/* field 3 */}
           <div>
             <p className="font-bold text-sm m-2 mt-6">Feedback Detail</p>
             <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
@@ -239,8 +239,14 @@ mode."
             <button
               className="bg-red border-none form-button max-650:max-w-full max-650:mt-4 :"
               onClick={(e) => {
-                e.preventDefault();
-                if (feedback && feedback._id) handleDelete(feedback._id);
+                e.preventDefault(); 
+                if (feedback && feedback._id) {
+                  handleDelete(feedback._id);
+                } else {
+                  console.error(
+                    "Cannot delete: suggestion or ID is undefined."
+                  );
+                }
               }}
             >
               <Link to="/">Delete</Link>
@@ -254,7 +260,13 @@ mode."
                 className="h-[40px] max-w-[144px] w-full rounded-[10px] ml-[16px] font-bold bg-purple text-mediumGrey  max-650:max-w-full max-650:ml-0"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (feedback && feedback._id) handleUpdate(feedback._id);
+                  if (suggestion && suggestion._id) {
+                    handleUpdate(suggestion._id);
+                  } else {
+                    console.error(
+                      "Cannot update: suggestion or ID is undefined."
+                    );
+                  }
                 }}
               >
                 Add feedback

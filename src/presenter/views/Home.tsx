@@ -3,7 +3,6 @@ import Sidebar from '../components/molecules/homepage/Sidebar';
 import Suggestion from '../components/molecules/homepage/Suggestion';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
 import { getUser } from '../../utils/getUser';
 
 type User = {
@@ -24,9 +23,9 @@ export default function Home() {
       const token = cookies.get('accessToken');
       if (token) {
         const fetchedUser = await getUser(token, navigate);
-        if (fetchedUser) setUser(fetchedUser); // Update state with fetched user
+        if (fetchedUser) setUser(fetchedUser); 
       } else {
-        navigate('/auth/sign-in'); // Redirect if token is missing
+        navigate('/auth/sign-in'); 
       }
     };
 

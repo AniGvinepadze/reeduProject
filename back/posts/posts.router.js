@@ -1,20 +1,40 @@
-const { Router } = require('express');
-const postsModels = require('../models/posts.models');
-const usersModel = require('../models/users.model');
+const { Router } = require("express");
+const postsModels = require("../models/posts.models");
+const usersModel = require("../models/users.model");
+const { isValidObjectId } = require("mongoose");
 
 const postsRouter = Router();
-
-postsRouter.get('/', async (req, res) => {
-  console.log(req.userId, 'req.userId');
-  const posts = await postsModels.find().populate('user', 'email fullName');
+//looks good
+postsRouter.get("/", async (req, res) => {
+  const posts = await postsModels
+    .find()
+    .populate("user", "email fullName")
+    .select("-password");
   res.json(posts);
 });
 
-postsRouter.post('/', async (req, res) => {
+//good
+postsRouter.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!isValidObjectId(id))
+    return res.status(400).json({ message: "wrong id format" });
+
+  const post = await postsModels.findById(id);
+  if (!post) return res.status(404).json({ message: "post not found" });
+  res.json(post);
+});
+
+//works
+postsRouter.post("/", async (req, res) => {
   const { title, category, details, status } = req.body;
   if (!title || !category || !details || !status)
-    return res.status(400).json({ message: 'invalid params' });
-  const newPost = await postsModel.create({
+    return res.status(400).json({ message: "invalid params" });
+
+  const existPost = await postsModels.findOne({ title });
+  if (existPost)
+    return res.status(400).json({ message: "user's post already exists" });
+
+  const newPost = await postsModels.create({
     title,
     category,
     details,
@@ -28,13 +48,17 @@ postsRouter.post('/', async (req, res) => {
   res.status(201).json({ newPost });
 });
 
-postsRouter.delete('/:id', async (req, res) => {
+postsRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
   console.log(id);
   if (!isValidObjectId(id))
-    return res.status(400).json({ message: 'not a valid object id' });
+    return res.status(400).json({ message: "not a valid object id" });
 
-  await postsModel.findByIdAndDelete(id);
+  const post = await postsModels.findByIdAndDelete(id);
+  if (!post)
+    return res.status(404).json({ message: "post could not be deleted" });
+
+  // await postsModel.findByIdAndDelete(id);
 
   await usersModel.findByIdAndUpdate(
     { _id: req.userId },
@@ -43,7 +67,29 @@ postsRouter.delete('/:id', async (req, res) => {
     }
   );
 
-  res.json({ message: 'post deleted' });
+  res.json({ message: "post deleted succsessfully" });
+});
+
+postsRouter.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!isValidObjectId(id))
+    return res.status(400).json({ message: "wrong id format" });
+
+  const { title, category, status, details } = req.body;
+
+  const updatedPost = {};
+
+  if (title) updatedPost.title = title;
+  if (category) updatedPost.category = category;
+  if (status) updatedPost.status = status;
+  if (details) updatedPost.details = details;
+
+  const post = await postsModels.findByIdAndUpdate(id, updatedPost, {
+    new: true,
+  });
+  if (!post)
+    return res.status(400).json({ message: "post could not be updated" });
+  res.json({ message: "user's post updated succsesfully", data: post });
 });
 
 module.exports = postsRouter;

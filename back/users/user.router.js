@@ -14,7 +14,7 @@ userRouter.get("/:id",async(req,res)=>{
     const {id} = req.params
     if(!isValidObjectId(id)) return res.status(400).json({message:"wrong id format"})
    
-        const user = await usersModel.findById(id).select('-password')
+    const user = await usersModel.findById(id).select("-password")
     if(!user) return res.status(404).json({message: 'user not found'})
     res.json(user)
 })

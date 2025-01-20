@@ -2,7 +2,7 @@ import { userAnne, userElijah, userJames, userRyan } from "../../../assets";
 
 export default function DetailComments() {
   return (
-    <div className="flex justify-center items-center  mt-6">
+    <div className="flex justify-center items-center rounded-[10px] mt-6 shadow-md">
       <div className="w-full bg-white rounded-lg p-6">
         <h1 className="text-lg font-bold text-gray-900 mb-6">4 Comments</h1>
 
@@ -55,10 +55,9 @@ export default function DetailComments() {
             </div>
           </div>
 
-          {/* Vertical reply connector */}
           <div className="absolute left-6 top-16 h-[300px] border-l-2 border-gray-200"></div>
 
-          {/* Reply 1 */}
+
           <div className="mt-6 pl-12">
             <div className="flex items-start space-x-4">
               <img
@@ -87,7 +86,6 @@ export default function DetailComments() {
             </div>
           </div>
 
-          {/* Reply 2 */}
           <div className="mt-6 pl-12">
             <div className="flex items-start space-x-4">
               <img

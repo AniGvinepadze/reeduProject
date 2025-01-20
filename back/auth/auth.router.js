@@ -43,7 +43,7 @@ authRouter.post('/sign-in', async (req, res) => {
 
 
 authRouter.get('/current-user', isAuth ,async (req, res) => {
-    const user = await usersModel.findById(req.userId).select('-password')
+    const user = await usersModel.findById(req.userId)
     res.json(user)
 })
 

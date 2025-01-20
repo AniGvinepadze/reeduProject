@@ -1,70 +1,9 @@
 const { Router } = require("express");
 const feedbackModel = require("../models/feedback.model");
 const { isValidObjectId } = require("mongoose");
-const { data } = require("autoprefixer");
+
 
 const feedbackRouter = Router();
-
-// type SuggestionType = {
-//   id: number
-//   title: string
-//   details: string
-//   category: string
-//   status: string
-// }
-
-
-// let suggestions = [
-//   {
-//     id: 1,
-
-//     title: "Add tags for solutions",
-//     details: "Easier to search for solutions based on a specific stack.",
-//     category: "Enhancement",
-//     status: "Suggestion",
-//   },
-//   {
-//     id: 2,
-
-//     title: "Add a dark theme option",
-//     details:
-//       "It would help people with light sensitivities and who prefer dark mode.",
-//     category: "Feature",
-//     status: "Planned",
-//   },
-//   {
-//     id: 3,
-
-//     title: "Q&A within the challenge hubs",
-//     details: "Challenge-specific Q&A would make for easy reference.",
-//     category: "Feature",
-//     status: "Suggestion",
-//   },
-//   {
-//     id: 4,
-
-//     title: "Allow image/video upload to feedback",
-//     details: "Images and screencasts can enhance comments on solutions.",
-//     category: "Enhancement",
-//     status: "In-Progress",
-//   },
-//   {
-//     id: 5,
-
-//     title: "Ability to follow others",
-//     details: "Stay updated on comments and solutions other people post.",
-//     category: "Feature",
-//     status: "Live",
-//   },
-//   {
-//     id: 6,
-
-//     title: "Preview images not loading",
-//     details: "Challenge preview images are missing when you apply a filter.",
-//     category: "Bug",
-//     status: "In-Progress",
-//   },
-// ];
 
 feedbackRouter.get("/", async (req, res) => {
   const feedback = await feedbackModel.find();
@@ -92,6 +31,7 @@ feedbackRouter.post("/", async (req, res) => {
   const existFeedback = await feedbackModel.findOne({ title });
   if (existFeedback)
     return res.status(400).json({ message: "user already exists" });
+  
   await feedbackModel.create({
     title,
     status,
