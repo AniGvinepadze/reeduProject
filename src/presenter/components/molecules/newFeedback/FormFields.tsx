@@ -16,25 +16,23 @@ export type FormData = {
 type SuggestionListProps = {
   suggestion: Suggestion | undefined;
 };
-
 export default function FormFields({ suggestion }: SuggestionListProps) {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupSec, setShowPopupSec] = useState(false);
-
   const [placeholder, setPlaceholder] = useState("Feature");
   const [placeholderSec, setPlaceholderSec] = useState("Planned");
-
-  const [feedbacks, setFeedbacks] = useState<Suggestion[]>([]);
-  const [feedback, setFeedback] = useState<Suggestion | null>(null);
   const [inputData, setInputData] = useState({
     title: "",
     category: "",
     details: "",
     status: "",
   });
-
-  console.log("Type of feedbacks:", typeof feedbacks);
-  console.log("Is feedbacks an array?", Array.isArray(feedbacks));
+  const [errors, setErrors] = useState({
+    title: "",
+    category: "",
+    details: "",
+    status: "",
+  });
 
   const options = ["Feature", "UX", "UI", "Enhancement", "Bug"];
   const options2 = ["Suggestion", "Planned", "In-Progress", "Live"];
@@ -51,61 +49,64 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
     setShowPopupSec(false);
   };
 
-  // const getData = async (id: string) => {
-  //   try {
-  //     const res = await axios.get(`http://localhost:3000/posts/${id}`);
-  //     setFeedbacks(res.data);
-  //   } catch (error) {
-  //     console.error("Error fetching feedbacks:", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getData();
-  // }, []);
-
-  const handleDelete = async (id: string) => {
-    try {
-      const res = await axios.delete(`http://localhost:3000/posts/${id}`);
-      setFeedbacks(res.data);
-    } catch (error) {
-      console.error("Error deleting feedback:", error);
-    }
-  };
-
-  const handleUpdate = async (id: string) => {
-    try {
-      const res = await axios.get(`http://localhost:3000/posts/${id}`);
-      setFeedback(res.data);
-      setInputData({
-        title: res.data.title || "",
-        category: res.data.category || "",
-        details: res.data.details || "",
-        status: res.data.status || "",
-      });
-      console.log("upddated feedback", res.data);
-    } catch (error) {
-      console.error("Error fetching feedback for update:", error);
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Validation logic
+  const validate = () => {
+    const newErrors = {
+      title: "",
+      category: "",
+      details: "",
+      status: "",
+    };
+
+    if (!inputData.title.trim()) {
+      newErrors.title = "Title is required.";
+    }
+
+    if (!inputData.category) {
+      newErrors.category = "Category is required.";
+    }
+
+    if (!inputData.status) {
+      newErrors.status = "Status is required.";
+    }
+
+    if (!inputData.details.trim()) {
+      newErrors.details = "Details are required.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.values(newErrors).every((error) => !error); // Returns true if no errors
+  };
+
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    token: string
+  ) => {
     e.preventDefault();
 
-    if (feedback && feedback._id) {
+    if (!validate()) {
+      return; // Prevent form submission if validation fails
+    }
+
+    // Handle update if feedback exists
+    if (suggestion && suggestion._id) {
       try {
         const res = await axios.put(
-          `http://localhost:3000/posts/${feedback._id}`,
+          `http://localhost:3000/posts/${suggestion._id}`,
+          { ...inputData },
           {
-            ...inputData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         console.log("Feedback updated:", res.data);
-        // getData();
       } catch (error) {
         console.error("Error updating feedback:", error);
       }
@@ -114,18 +115,31 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
     }
   };
 
+  const handleDelete = async (id: string, token: string) => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Feedback deleted:", res.data);
+    } catch (error) {
+      console.error("Error deleting feedback:", error);
+    }
+  };
+
   return (
     <>
       <main className="text-darkBlue">
-        <div className="flex ">
+        <div className="flex">
           <img src={arrowLeftIcon} alt="arrow" className="mr-3" />
-          <Link to="/" className="font-bold text-sm ">
+          <Link to="/" className="font-bold text-sm">
             Go Back
           </Link>
         </div>
 
         <form
-          onSubmit={onSubmit}
+          onSubmit={(e) => onSubmit(e, "your_token_here")}
           className="max-w-[540px] w-full p-8 rounded-[10px] bg-white my-24"
         >
           <div className="relative">
@@ -138,44 +152,42 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
               Editing '{inputData.title || "Add a dark theme option"}'
             </h2>
           </div>
-          <div className="mt-14 ">
+
+          <div className="mt-14">
             <p className="font-bold text-sm m-2 mt-6">Feedback Title</p>
-            <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
-              Add a short, descriptive headline
-            </p>
             <input
-              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] "
+              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px]"
               value={inputData.title}
               name="title"
               type="text"
               placeholder="Please add a dark theme option"
               onChange={handleChange}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm">{errors.title}</p>
+            )}
           </div>
 
           <div className="relative">
             <p className="font-bold text-sm m-2 mt-6">Category</p>
-            <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
-              Choose a category for your feedback
-            </p>
             <input
-              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] cursor-pointer "
-              onClick={() => {
-                setShowPopup((prev) => !prev);
-              }}
-              onChange={handleChange}
-              placeholder={placeholder}
+              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] cursor-pointer"
+              onClick={() => setShowPopup(!showPopup)}
               value={inputData.category}
               name="category"
+              placeholder={placeholder}
+              onChange={handleChange}
             />
-
+            {errors.category && (
+              <p className="text-red-500 text-sm">{errors.category}</p>
+            )}
             {showPopup && (
-              <div className="absolute mt-2 border  bg-white shadow-xl rounded w-full z-10 ">
+              <div className="absolute mt-2 border bg-white shadow-xl rounded w-full z-10">
                 {options.map((option) => (
                   <div
                     key={option}
                     onClick={() => handleSelectOption(option)}
-                    className="hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer  "
+                    className="hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer"
                   >
                     <p className="p-3">{option}</p>
                     <div className="w-full h-[1px] bg-gray-100" />
@@ -187,27 +199,24 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
 
           <div className="relative">
             <p className="font-bold text-sm m-2 mt-6">Update Status</p>
-            <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
-              Change feedback state
-            </p>
             <input
-              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] cursor-pointer "
-              onClick={() => {
-                setShowPopupSec(true);
-              }}
-              onChange={handleChange}
-              placeholder={placeholderSec}
+              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] cursor-pointer"
+              onClick={() => setShowPopupSec(true)}
               value={inputData.status}
               name="status"
+              placeholder={placeholderSec}
+              onChange={handleChange}
             />
-
+            {errors.status && (
+              <p className="text-red-500 text-sm">{errors.status}</p>
+            )}
             {showPopupSec && (
-              <div className="absolute mt-2 border  bg-white shadow-xl rounded w-full z-10 ">
+              <div className="absolute mt-2 border bg-white shadow-xl rounded w-full z-10">
                 {options2.map((option) => (
                   <div
                     key={option}
                     onClick={() => handleSelectOption2(option)}
-                    className="hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer  "
+                    className="hover:bg-gray-100 hover:text-[#AD1FEA] cursor-pointer"
                   >
                     <p className="p-3">{option}</p>
                     <div className="w-full h-[1px] bg-gray-100" />
@@ -219,57 +228,41 @@ export default function FormFields({ suggestion }: SuggestionListProps) {
 
           <div>
             <p className="font-bold text-sm m-2 mt-6">Feedback Detail</p>
-            <p className="text-[#647196] font-normal text-sm mb-4 ml-2">
-              Include any specific comments on what should be improved, added,
-              etc.
-            </p>
-
             <input
-              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] min-h-[90px] "
+              className="p-4 text-[#3A4374] bg-[#F7F8FD] w-full rounded-[6px] min-h-[90px]"
               value={inputData.details}
               name="details"
               type="text"
-              placeholder="It would help people with light sensitivities and who prefer dark 
-mode."
+              placeholder="It would help people with light sensitivities and who prefer dark mode."
               onChange={handleChange}
             />
+            {errors.details && (
+              <p className="text-red-500 text-sm">{errors.details}</p>
+            )}
           </div>
 
+          {/* Buttons */}
           <div className="flex align-bottom max-650:flex-col-reverse mt-8">
             <button
-              className="bg-red border-none form-button max-650:max-w-full max-650:mt-4 :"
-              onClick={(e) => {
-                e.preventDefault(); 
-                if (feedback && feedback._id) {
-                  handleDelete(feedback._id);
-                } else {
-                  console.error(
-                    "Cannot delete: suggestion or ID is undefined."
-                  );
+              type="button"
+              className="bg-red border-none form-button"
+              onClick={() => {
+                if (suggestion && suggestion._id) {
+                  handleDelete(suggestion._id, "your_token_here");
                 }
               }}
             >
-              <Link to="/">Delete</Link>
+              Delete
             </button>
-            <div className="w-full flex justify-end max-650:flex-col max-650:justify-between ">
+            <div className="w-full flex justify-end max-650:flex-col max-650:justify-between">
               <button className="form-button bg-mediumBlue max-650:max-w-full max-650:mb-[16px]">
                 <Link to="/">Cancel</Link>
               </button>
               <button
                 type="submit"
-                className="h-[40px] max-w-[144px] w-full rounded-[10px] ml-[16px] font-bold bg-purple text-mediumGrey  max-650:max-w-full max-650:ml-0"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (suggestion && suggestion._id) {
-                    handleUpdate(suggestion._id);
-                  } else {
-                    console.error(
-                      "Cannot update: suggestion or ID is undefined."
-                    );
-                  }
-                }}
+                className="h-[40px] max-w-[144px] w-full rounded-[10px] ml-[16px] font-bold bg-purple text-mediumGrey max-650:max-w-full max-650:ml-0"
               >
-                Add feedback
+                Update feedback
               </button>
             </div>
           </div>

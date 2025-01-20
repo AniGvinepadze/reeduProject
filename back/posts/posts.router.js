@@ -30,10 +30,6 @@ postsRouter.post("/", async (req, res) => {
   if (!title || !category || !details || !status)
     return res.status(400).json({ message: "invalid params" });
 
-  const existPost = await postsModels.findOne({ title });
-  if (existPost)
-    return res.status(400).json({ message: "user's post already exists" });
-
   const newPost = await postsModels.create({
     title,
     category,
