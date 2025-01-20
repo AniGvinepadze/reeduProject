@@ -3,7 +3,8 @@ import Sidebar from '../components/molecules/homepage/Sidebar';
 import Suggestion from '../components/molecules/homepage/Suggestion';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import { getUser } from '../../utils/getUser';
+import axios from 'axios';
+// import { getUser } from '../../utils/getUser';
 
 type User = {
   fullName: string;
@@ -12,25 +13,39 @@ type User = {
   posts: string[];
 };
 
-const cookies = new Cookies();
+// const cookies = new Cookies();
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const cookes = new Cookies();
+  const token: string = cookes.get('accessToken');
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = cookies.get('accessToken');
-      if (token) {
-        const fetchedUser = await getUser(token, navigate);
-        if (fetchedUser) setUser(fetchedUser); 
-      } else {
-        navigate('/auth/sign-in'); 
+
+//     const fetchUser = async () => {
+//       const token = cookies.get('accessToken');
+//       if (token) {
+//         const fetchedUser = await getUser(token, navigate);
+//         if (fetchedUser) setUser(fetchedUser); 
+//       } else {
+//         navigate('/auth/sign-in'); 
+// =======
+    const getCurrentUser = async (token: string) => {
+      try {
+        const res = await axios.get('http://localhost:3000/auth/current-user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (error) {
+        navigate('/auth/sign-in');
       }
     };
 
-    fetchUser();
-  }, [navigate]);
+    getCurrentUser(token);
+  }, [token]);
 
   if (!user) return null;
 
