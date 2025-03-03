@@ -1,143 +1,126 @@
 import axios from "axios";
-import { userAnne, userElijah, userJames, userRyan } from "../../../assets";
-import { Cookies } from "react-cookie";
 import { useEffect, useState } from "react";
+import { Cookies } from "react-cookie";
+import Anne from "../../../../../public/assets/img/Anne.svg";
+import Button from "../../atoms/button";
+
+type User = {
+  id: number;
+  fullName: string;
+  email?: string;
+  avatarUrl?: string;
+};
+
+type Comment = {
+  id: number;
+  comment: string;
+  user?: User; // Make user optional to handle undefined case
+};
 
 export default function DetailComments() {
-const [suggestions,setSuggestions] = useState([]) 
-  const cookie = new Cookies()
-  const getSuggestion = async () => {
-    const res = await axios.get("http://localhost:3000/comment", {
-      headers: {
-        Authorization: `Bearer ${cookie.get("accessToken")}`,
-      },
-    });
-    setSuggestions(res.data);
-     console.log(suggestions.id,"suggestions")
-    console.log(res.data, "res dataaa");
-  };
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+
+  const cookie = new Cookies();
 
   useEffect(() => {
-    getSuggestion();
+    const getComments = async () => {
+      try {
+        const res = await axios.get<Comment[]>("http://localhost:3000/comment", {
+          headers: { Authorization: `Bearer ${cookie.get("accessToken")}` },
+        });
+        setComments(res.data);
+      } catch (error) {
+        setError("Failed to load comments.");
+        console.error("API Request Failed", error);
+      }
+    };
+
+    getComments();
   }, []);
 
+  const postComment = async () => {
+    if (!newComment.trim()) return; // Avoid posting empty comments
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/comment",
+        { comment: newComment },
+        {
+          headers: { Authorization: `Bearer ${cookie.get("accessToken")}` },
+        }
+      );
+      setComments((prevComments) => [...prevComments, res.data]);
+      setNewComment("");
+    } catch (error) {
+      setError("Failed to post comment.");
+      console.error("API Request Failed", error);
+    }
+  };
+
   return (
-    <div className="flex justify-center items-center rounded-[10px] mt-6 shadow-md">
-      <div className="w-full bg-white rounded-lg p-6">
-        <h1 className="text-lg font-bold text-gray-900 mb-6">4 Comments</h1>
+    <div>
+      <div className="flex justify-center items-center rounded-[10px] mt-6 shadow-md">
+        <div className="w-full bg-white rounded-lg p-6">
+          <h1 className="text-lg font-bold text-gray-900 mb-6">
+            {comments.length} Comments
+          </h1>
 
-        <div className="mb-6">
-          <div className="flex items-start space-x-4">
-            <img
-              src={userElijah}
-              alt="Elijah Moss"
-              className="w-12 h-12 rounded-full"
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-center">
-                <h2 className="font-bold text-gray-900">Elijah Moss</h2>
-                <button className="text-blue-600 text-sm hover:underline">
-                  Reply
-                </button>
-              </div>
-              <p className="text-gray-600 text-sm">@hexagon.bestagon</p>
-              <p className="mt-2 text-gray-700">
-                Also, please allow styles to be applied based on system
-                preferences. I would love to be able to browse Frontend Mentor
-                in the evening after my device's dark mode turns on without the
-                bright background it currently has.
-              </p>
-            </div>
-          </div>
-        </div>
+          {error && <p className="text-red-600">{error}</p>}
 
-        <div className="mb-6 relative">
-          <div className="flex items-start space-x-4">
-            <img
-              src={userJames}
-              alt="James Skinner"
-              className="w-12 h-12 rounded-full"
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-center">
-                <h2 className="font-bold text-gray-900">James Skinner</h2>
-                <button className="text-blue-600 text-sm hover:underline">
-                  Reply
-                </button>
-              </div>
-              <p className="text-gray-600 text-sm">@hummingbird1</p>
-              <p className="mt-2 text-gray-700">
-                Second this! I do a lot of late-night coding and reading. Adding
-                a dark theme can be great for preventing eye strain and the
-                headaches that result. It's also quite a trend with modern apps
-                and apparently saves battery life.
-              </p>
-            </div>
-          </div>
-
-          <div className="absolute left-6 top-16 h-[300px] border-l-2 border-gray-200"></div>
-
-
-          <div className="mt-6 pl-12">
-            <div className="flex items-start space-x-4">
-              <img
-                src={userAnne}
-                alt="Anne Valentine"
-                className="w-12 h-12 rounded-full"
-              />
-              <div className="flex-1">
-                <div className="flex justify-between items-center">
-                  <h2 className="font-bold text-gray-900">Anne Valentine</h2>
-                  <button className="text-blue-600 text-sm hover:underline">
-                    Reply
-                  </button>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <div key={comment.id || index} className="mb-6">
+                <div className="flex items-start space-x-4">
+                  <img
+                    src={comment.user?.avatarUrl || Anne}
+                    alt={comment.user?.fullName || "Anonymous"}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center">
+                      <h2 className="font-bold text-gray-900">
+                        {comment.user?.fullName || "Anonymous"}
+                      </h2>
+                      <button className="text-blue-600 text-sm hover:underline">
+                        Reply
+                      </button>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      @{comment.user?.email || "No email"}
+                    </p>
+                    <p className="mt-2 text-gray-700">{comment.comment}</p>
+                  </div>
                 </div>
-                <p className="text-gray-600 text-sm">@annev1990</p>
-                <p className="mt-2 text-gray-700">
-                  <span className="text-[#AD1FEA] font-bold">
-                    @hummingbird1
-                  </span>
-                  While waiting for dark mode, there are browser extensions that
-                  will also do the job. Search for "dark theme" followed by your
-                  browser. There might be a need to turn off the extension for
-                  sites with naturally black backgrounds though.
-                </p>
               </div>
-            </div>
-          </div>
-
-          <div className="mt-6 pl-12">
-            <div className="flex items-start space-x-4">
-              <img
-                src={userRyan}
-                alt="Ryan Welles"
-                className="w-12 h-12 rounded-full"
-              />
-              <div className="flex-1">
-                <div className="flex justify-between items-center">
-                  <h2 className="font-bold text-gray-900">Ryan Welles</h2>
-                  <button className="text-blue-600 text-sm hover:underline">
-                    Reply
-                  </button>
-                </div>
-                <p className="text-gray-600 text-sm">@voyager.344</p>
-                <p className="mt-2 text-gray-700">
-                  <span className="text-[#AD1FEA] font-bold">@annev1990 </span>
-                  Good point! Using any kind of style extension is great and can
-                  be highly customizable, like the ability to change contrast
-                  and brightness. I'd prefer not to use one of such extensions,
-                  however, for security and privacy reasons.
-                </p>
-              </div>
-            </div>
-          </div>
+            ))
+          ) : (
+            <p>No comments available</p>
+          )}
         </div>
-
-
-
-        {/* {suggestions.map((comment,index)=>(
-          <div key={index}>{comment.} </div>
-        ))} */}
+      </div>
+      <div className="p-4 bg-white rounded-lg mt-6 w-full shadow-md">
+        <h3 className="text-lg font-bold mb-2">Add Comment</h3>
+        <textarea
+          className="w-full p-2 resize-none bg-lightGrey border-none rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          rows={4}
+          placeholder="Type your comment here"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        ></textarea>
+        <div className="flex justify-between">
+          <div className="text-gray-500 mb-2">
+            {250 - newComment.length} Characters left
+          </div>
+          <button
+            className="bg-purple"
+            onClick={postComment}
+            disabled={!newComment.trim()} // Disable button if comment is empty
+          >
+            Post Comment
+          </button>
+        </div>
       </div>
     </div>
   );

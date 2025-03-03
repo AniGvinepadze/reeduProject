@@ -8,8 +8,6 @@ import DetailsHeader from "../components/molecules/feedbackDetails/DetailsHeader
 
 export default function FeedbackDetails() {
   const params = useParams();
-  console.log(params, "parmaas");
-  console.log(params.id, "params id");
 
   // const cookie = new Cookies()
   // const getSuggestion = async () => {

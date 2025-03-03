@@ -11,7 +11,7 @@ type DetailsProps = {
 };
 
 export default function Details({ id }: DetailsProps) {
-  console.log(id, "id");
+
   const { suggestions } = useSuggestions();
   const cookie = new Cookies();
   const [suggestion, setSuggestion] = useState({});
@@ -26,7 +26,6 @@ export default function Details({ id }: DetailsProps) {
       },
     });
     setSuggestion(res.data);
-    console.log(res.data, "res dataaa");
   };
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export default function Details({ id }: DetailsProps) {
     <div>
       <FeedBackCommentarsHeader suggestion={suggestion} />
       <DetailComments />
-      <AddComment />
+      {/* <AddComment /> */}
     </div>
   );
 }

@@ -18,7 +18,7 @@ connectToDb();
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts",isAuth, postsRouter);
-app.use("/comment",commentRouter)
+app.use("/comment",isAuth,commentRouter)
 
 app.get("/", (req, res) => {
   res.send("hello world");
