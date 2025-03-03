@@ -1,6 +1,26 @@
+import axios from "axios";
 import { userAnne, userElijah, userJames, userRyan } from "../../../assets";
+import { Cookies } from "react-cookie";
+import { useEffect, useState } from "react";
 
 export default function DetailComments() {
+const [suggestions,setSuggestions] = useState([]) 
+  const cookie = new Cookies()
+  const getSuggestion = async () => {
+    const res = await axios.get("http://localhost:3000/comment", {
+      headers: {
+        Authorization: `Bearer ${cookie.get("accessToken")}`,
+      },
+    });
+    setSuggestions(res.data);
+     console.log(suggestions.id,"suggestions")
+    console.log(res.data, "res dataaa");
+  };
+
+  useEffect(() => {
+    getSuggestion();
+  }, []);
+
   return (
     <div className="flex justify-center items-center rounded-[10px] mt-6 shadow-md">
       <div className="w-full bg-white rounded-lg p-6">
@@ -112,6 +132,12 @@ export default function DetailComments() {
             </div>
           </div>
         </div>
+
+
+
+        {/* {suggestions.map((comment,index)=>(
+          <div key={index}>{comment.} </div>
+        ))} */}
       </div>
     </div>
   );

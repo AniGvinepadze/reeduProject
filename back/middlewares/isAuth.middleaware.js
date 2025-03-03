@@ -8,7 +8,7 @@ const getToken = (headers) => {
 
 const isAuth = async (req, res, next) => {
   const token = getToken(req.headers);
-  console.log(token, "token");
+  // console.log(token, "token");
   if (!token) return res.status(401).json({ message: "permition dinied" });
   try {
     const payLoad = jwt.verify(token, process.env.JWT_SECRET);

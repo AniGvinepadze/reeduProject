@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../../assets";
 import { editSign } from "../../../assets";
 import { Suggestion } from "../../../../../context";
+import { Cookies } from "react-cookie";
+import { Navigate } from "react-router-dom";
 
 export type FormData = {
   title: string;
@@ -54,7 +56,7 @@ export default function FormFields({ suggestion }: any) {
     setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validation logic
+
   const validate = () => {
     const newErrors = {
       title: "",
@@ -84,16 +86,18 @@ export default function FormFields({ suggestion }: any) {
     return Object.values(newErrors).every((error) => !error); // Returns true if no errors
   };
 
+
+  const navigate = useNavigate()
+  
+      const cookie = new Cookies();
   const onSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
 
     if (!validate()) {
-      return; // Prevent form submission if validation fails
+      return;
     }
-
-    // Handle update if feedback exists
     if (suggestion && suggestion._id) {
       try {
         const res = await axios.put(
@@ -101,10 +105,13 @@ export default function FormFields({ suggestion }: any) {
           { ...inputData },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${cookie.get("accessToken")}`,
             },
           }
         );
+        if(res.status === 200){
+            navigate("/")
+        }
         console.log("Feedback updated:", res.data);
       } catch (error) {
         console.error("Error updating feedback:", error);
@@ -114,14 +121,17 @@ export default function FormFields({ suggestion }: any) {
     }
   };
 
-  const handleDelete = async (id: string, token: string) => {
+  const handleDelete = async (id: string,) => {
     try {
       console.log("clicked");
       const res = await axios.delete(`http://localhost:3000/posts/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${cookie.get('accessToken')}`,
         },
       });
+      if(res.status === 200){
+        navigate("/")
+    }
       console.log("Feedback deleted:", res.data);
     } catch (error) {
       console.error("Error deleting feedback:", error);
@@ -164,7 +174,7 @@ export default function FormFields({ suggestion }: any) {
               onChange={handleChange}
             />
             {errors.title && (
-              <p className="text-red-500 text-sm">{errors.title}</p>
+              <p className="text-rose-600 italic text-sm m-1">{errors.title}</p>
             )}
           </div>
 
@@ -179,7 +189,7 @@ export default function FormFields({ suggestion }: any) {
               onChange={handleChange}
             />
             {errors.category && (
-              <p className="text-red-500 text-sm">{errors.category}</p>
+              <p className="text-rose-600 italic text-sm m-1">{errors.category}</p>
             )}
             {showPopup && (
               <div className="absolute mt-2 border bg-white shadow-xl rounded w-full z-10">
@@ -208,7 +218,7 @@ export default function FormFields({ suggestion }: any) {
               onChange={handleChange}
             />
             {errors.status && (
-              <p className="text-red-500 text-sm">{errors.status}</p>
+              <p className="text-rose-600 italic text-sm m-1">{errors.status}</p>
             )}
             {showPopupSec && (
               <div className="absolute mt-2 border bg-white shadow-xl rounded w-full z-10">
@@ -237,11 +247,11 @@ export default function FormFields({ suggestion }: any) {
               onChange={handleChange}
             />
             {errors.details && (
-              <p className="text-red-500 text-sm">{errors.details}</p>
+              <p className="text-rose-600 italic text-sm m-1">{errors.details}</p>
             )}
           </div>
 
-          {/* Buttons */}
+        
           <div className="flex align-bottom max-650:flex-col-reverse mt-8">
             <button
               type="button"
@@ -249,7 +259,7 @@ export default function FormFields({ suggestion }: any) {
               onClick={() => {
                 console.log(suggestion, "suggedtion on click");
                 if (suggestion && suggestion._id) {
-                  handleDelete(suggestion._id, "your_token_here");
+                  handleDelete(suggestion._id);
                 }
               }}
             >

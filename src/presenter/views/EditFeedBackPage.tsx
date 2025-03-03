@@ -5,9 +5,9 @@ import Cookies from "universal-cookie";
 import FormFields from "../components/molecules/newFeedback/FormFields";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-type DetailsProps = {
-  id: string;
-};
+// type DetailsProps = {
+//   id: string;
+// };
 
 export default function EditFeedBackPage() {
   const { id } = useParams();
@@ -33,6 +33,8 @@ export default function EditFeedBackPage() {
   useEffect(() => {
     getSuggestion(id as string);
   }, []);
+
+  
   return (
     <section className="bg-[#F7F8FD] my-[92px] mx-auto max-w-[540px] flex justify-center max-900:mt-[56px] max-650:mt-[34px] ">
       <div className="container h-[910px] max-650:h-[967px] text-[14px] max-650:text-[13px] flex flex-col justify-between max-650:max-w-[327px] ">

@@ -44,4 +44,16 @@ userRouter.put("/:id",async(req,res)=>{
     res.json({message:"user updated succsesffully",data:user})
 })
 
+// userRouter.post("/comment", async(req,res) => {
+//     const {id} = req.params
+//     if(!isValidObjectId(id)) return res.status(400).json({messsage:"wrong id format"})
+
+//     const {comment} = req.body    
+//     if(!comment) return res.status(400).json({message:"invalid params"})
+
+//      const newComment = ({
+//       comment
+//      }) 
+// })
+
 module.exports = userRouter
