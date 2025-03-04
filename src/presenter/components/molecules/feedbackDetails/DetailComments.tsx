@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Cookies } from "react-cookie";
-import Anne from "../../../../../public/assets/img/Anne.svg";
-import Button from "../../atoms/button";
+import human from "../../../../../public/assets/img/l60Hf.png";
 
 type User = {
   id: number;
-  fullName: string;
+  fullName?: string;
   email?: string;
   avatarUrl?: string;
 };
@@ -14,50 +13,62 @@ type User = {
 type Comment = {
   id: number;
   comment: string;
-  user?: User; // Make user optional to handle undefined case
+  user?: User;
+  parentId?: number | null;
 };
 
 export default function DetailComments() {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState<string>("");
+  const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
   const [error, setError] = useState<string | null>(null);
 
   const cookie = new Cookies();
 
-  useEffect(() => {
-    const getComments = async () => {
-      try {
-        const res = await axios.get<Comment[]>("http://localhost:3000/comment", {
-          headers: { Authorization: `Bearer ${cookie.get("accessToken")}` },
-        });
-        setComments(res.data);
-      } catch (error) {
-        setError("Failed to load comments.");
-        console.error("API Request Failed", error);
-      }
-    };
-
-    getComments();
-  }, []);
-
-  const postComment = async () => {
-    if (!newComment.trim()) return; // Avoid posting empty comments
+  const postComment = async (parentId: number | null) => {
+    if (!newComment[parentId || 0]?.trim()) return;
 
     try {
       const res = await axios.post(
         "http://localhost:3000/comment",
-        { comment: newComment },
+        {
+          comment: newComment[parentId || 0],
+          parentId,
+        },
         {
           headers: { Authorization: `Bearer ${cookie.get("accessToken")}` },
         }
       );
-      setComments((prevComments) => [...prevComments, res.data]);
-      setNewComment("");
+
+      if (res.status === 201) {
+        getComments();
+        setNewComment((prev) => ({ ...prev, [parentId || 0]: "" }));
+      }
     } catch (error) {
       setError("Failed to post comment.");
+      console.error("Request Failed", error);
+    }
+  };
+
+  const getComments = async () => {
+    try {
+      const response = await axios.get<Comment[]>(
+        "http://localhost:3000/comment",
+        {
+          headers: {
+            Authorization: `Bearer ${cookie.get("accessToken")}`,
+          },
+        }
+      );
+      setComments(response.data);
+    } catch (error) {
+      setError("Failed to load comments.");
       console.error("API Request Failed", error);
     }
   };
+
+  useEffect(() => {
+    getComments();
+  }, []);
 
   return (
     <div>
@@ -71,21 +82,18 @@ export default function DetailComments() {
 
           {comments.length > 0 ? (
             comments.map((comment, index) => (
-              <div key={comment.id || index} className="mb-6">
+              <div key={index} className="mb-6">
                 <div className="flex items-start space-x-4">
                   <img
-                    src={comment.user?.avatarUrl || Anne}
+                    src={comment.user?.avatarUrl || human}
                     alt={comment.user?.fullName || "Anonymous"}
-                    className="w-12 h-12 rounded-full"
+                    className="w-[50px] h-12 rounded-full"
                   />
                   <div className="flex-1">
                     <div className="flex justify-between items-center">
                       <h2 className="font-bold text-gray-900">
                         {comment.user?.fullName || "Anonymous"}
                       </h2>
-                      <button className="text-blue-600 text-sm hover:underline">
-                        Reply
-                      </button>
                     </div>
                     <p className="text-gray-600 text-sm">
                       @{comment.user?.email || "No email"}
@@ -100,28 +108,37 @@ export default function DetailComments() {
           )}
         </div>
       </div>
-      <div className="p-4 bg-white rounded-lg mt-6 w-full shadow-md">
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          postComment(null);
+        }}
+        className="p-4 bg-white rounded-lg mt-6 w-full shadow-md"
+      >
         <h3 className="text-lg font-bold mb-2">Add Comment</h3>
         <textarea
           className="w-full p-2 resize-none bg-lightGrey border-none rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
           rows={4}
           placeholder="Type your comment here"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
+          value={newComment[0] || ""}
+          onChange={(e) =>
+            setNewComment((prev) => ({ ...prev, [0]: e.target.value }))
+          }
         ></textarea>
         <div className="flex justify-between">
           <div className="text-gray-500 mb-2">
-            {250 - newComment.length} Characters left
+            {250 - (newComment[0]?.length || 0)} Characters left
           </div>
           <button
-            className="bg-purple"
-            onClick={postComment}
-            disabled={!newComment.trim()} // Disable button if comment is empty
+            type="submit"
+            className="bg-[#AD1FEA] max-w-[137px] w-full flex justify-center items-center p-3 rounded-xl text-white font-semibold text-base cursor-pointer hover:bg-[#ba48eb] transition-colors ease-in-out duration-300"
+            disabled={!newComment[0]?.trim()}
           >
             Post Comment
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

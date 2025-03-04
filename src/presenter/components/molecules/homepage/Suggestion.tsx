@@ -7,7 +7,7 @@ export default function Suggestion({
   selectedCategory: string;
 }) {
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <SuggestionHeader />
       <SuggestionList selectedCategory={selectedCategory} />
     </div>

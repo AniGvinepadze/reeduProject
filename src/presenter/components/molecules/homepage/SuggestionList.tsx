@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { arrowUpIcon, arrowUpwhite, message } from '../../../assets';
-import InteractiveElement from '../../atoms/interactiveElement';
-import { cn } from '../../../../utils/twMerge';
-
-import axios from 'axios';
-import { Suggestion, useSuggestions } from '../../../../../context';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { arrowUpIcon, arrowUpwhite, message } from "../../../assets";
+import InteractiveElement from "../../atoms/interactiveElement";
+import { cn } from "../../../../utils/twMerge";
+import axios from "axios";
+import { Suggestion, useSuggestions } from "../../../../../context";
 
 export default function SuggestionList({
   selectedCategory,
@@ -21,85 +20,83 @@ export default function SuggestionList({
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const feedbackRes = await axios.get('http://localhost:3000/posts');
+        const feedbackRes = await axios.get("http://localhost:3000/posts");
         setFeedback(feedbackRes.data);
       } catch (error) {
-        console.error('Error fetching feedback:', error);
+        console.error("Error fetching feedback:", error);
       }
     };
 
-    // fetchFeedbacks();
+    fetchFeedbacks();
   }, []);
-  console.log(feedback);
-  console.log(suggestions);
+
+  useEffect(() => {
+    console.log("Updated suggestions:", suggestions);
+  }, [suggestions]);
 
   const filteredSuggestions = suggestions.filter(
     (suggestion) =>
-      selectedCategory === 'All' || suggestion.category === selectedCategory
+      selectedCategory === "All" || suggestion.category === selectedCategory
   );
 
   return (
-    <div className='w-full max-650:px-6 '>
+    <div className="w-full max-650:px-6 ">
       <div>
         {filteredSuggestions.map((suggestion) => (
           <div
-            className='w-full rounded-[10px] p-6 bg-white mt-5 flex justify-between max-450:flex-col cursor-pointer shadow-md'
+            className="w-full rounded-[10px] p-6 bg-white mt-5 flex justify-between max-450:flex-col cursor-pointer shadow-md"
             onClick={() => navigate(`/feedback-detail/${suggestion._id}`)}
             key={suggestion._id}
           >
-            <div className='flex gap-10 max-650:gap-5'>
+            <div className="flex gap-10 max-650:gap-5">
               <button
                 className={cn(
-                  `bg-mediumGrey max-450:hidden rounded-[10px] cursor-pointer flex flex-col justify-center items-center  h-[53px] w-[40px] mt-4   `,
-                  'hover:bg-[#CFD7FF] transition-colors duration-200 ',
+                  `bg-mediumGrey max-500:hidden rounded-[10px] cursor-pointer flex flex-col justify-center items-center h-[53px] w-[40px] mt-4 `,
+                  "hover:bg-[#CFD7FF] transition-colors duration-200",
                   active === suggestion.title &&
-                    'bg-blue text-white hover:text-mediumBlue'
+                    "bg-blue text-white hover:text-mediumBlue"
                 )}
-                onClick={() => setActive?.(suggestion.title)}
+                onClick={() => setActive(suggestion.title)}
               >
                 <img
                   src={active === suggestion.title ? arrowUpwhite : arrowUpIcon}
-                  alt='arrowUpIcon'
-                  className='w-2 h-2 mb-1'
+                  alt="arrowUpIcon"
+                  className="w-2 h-2 mb-1 max-500:hidden"
                 />
                 <p
                   className={cn(
                     `font-bold text-[13px] ${
                       active === suggestion.title
-                        ? 'text-white'
-                        : 'text-mediumBlue'
+                        ? "text-white"
+                        : "text-mediumBlue"
                     }`,
-                    active === suggestion.title && 'hover:text-mediumBlue'
+                    active === suggestion.title && "hover:text-mediumBlue"
                   )}
                 >
                   {suggestion.upVotes}
                 </p>
               </button>
               <div>
-                <h2 className='font-bold text-[18px] text-mediumBlue  max-550:text-[13px]'>
+                <h2 className="font-bold text-[18px] text-mediumBlue max-550:text-[13px]">
                   {suggestion.title}
                 </h2>
-                <p className='font-normal text-base text-grey mb-3 max-550:text-[13px]'>
+                <p className="font-normal text-base text-grey mb-3 max-550:text-[13px]">
                   {suggestion.details}
                 </p>
-
                 <InteractiveElement
-                  variant='default'
+                  variant="default"
                   label={suggestion.category}
                 />
               </div>
             </div>
-            <div className='flex justify-between items-center mt-4'>
-              <div className='hidden max-450:block'>
-                <img src={arrowUpIcon} className='mr-2 mb-0.5' alt='arrow' />
-              </div>
-              <div className='flex items-center -mt-3 max-450:mt-0'>
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center -mt-3 max-450:mt-0 max-500:-ml-6">
                 <img
                   src={message}
-                  alt='message'
-                  className='w-[42px] h-9  pl-6'
+                  alt="message"
+                  className="w-[42px] h-9 pl-6"
                 />
-                <p className='text-mediumBlue font-bold text-base px-3'>
+                <p className="text-mediumBlue font-bold text-base px-3">
                   {suggestion.comments.length}
                 </p>
               </div>
