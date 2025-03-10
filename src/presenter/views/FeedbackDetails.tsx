@@ -26,7 +26,7 @@ export default function FeedbackDetails() {
     <main className="container !max-w-[730px] pt-20 pb-20 max-600:pt-12 max-600:pb-12">
       <DetailsHeader />
       <section>
-        <Details id={params.id} />
+        <Details id={params.id || ""} />
       </section>
     </main>
   );

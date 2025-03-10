@@ -25,7 +25,7 @@ const cookies = new Cookies()
     console.log(data);
     try {
       setError("");
-      const res = await axios.post("http://localhost:3000/auth/sign-in", data);
+      const res = await axios.post("https://reeduprojectback.onrender.com/auth/sign-in", data);
 
       console.log(res, "res");
         if (res.status === 200) {

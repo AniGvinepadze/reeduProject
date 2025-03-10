@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Suggestion } from "../../../../context";
 import { arrowUpIcon, arrowUpwhite, message } from "../../assets";
 import { cn } from "../../../utils/twMerge";
 import GoBack from "../molecules/newFeedback/GoBack";

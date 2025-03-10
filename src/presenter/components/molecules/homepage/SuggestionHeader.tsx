@@ -18,6 +18,7 @@ export default function SuggestionHeader() {
   // const [activeOption, setActiveOption] = useState('Most Upvotes');
   // const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  console.log(setSuggestions)
 
   // const filterSuggestions = (option: string) => {
   //   let sortedSuggestions = [...suggestions];

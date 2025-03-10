@@ -21,7 +21,7 @@ export default function EditFeedBackPage() {
   const [suggestion, setSuggestion] = useState({});
 
   const getSuggestion = async (id: string) => {
-    const res = await axios.get(`http://localhost:3000/posts/${id}`, {
+    const res = await axios.get(`https://reeduprojectback.onrender.com/posts/${id}`, {
       headers: {
         Authorization: `Bearer ${cookie.get("accessToken")}`,
       },

@@ -23,17 +23,10 @@ export default function Home() {
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   useEffect(() => {
-    //     const fetchUser = async () => {
-    //       const token = cookies.get('accessToken');
-    //       if (token) {
-    //         const fetchedUser = await getUser(token, navigate);
-    //         if (fetchedUser) setUser(fetchedUser);
-    //       } else {
-    //         navigate('/auth/sign-in');
-    // =======
+  
     const getCurrentUser = async (token: string) => {
       try {
-        const res = await axios.get('http://localhost:3000/auth/current-user', {
+        const res = await axios.get('https://reeduprojectback.onrender.com/auth/current-user', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

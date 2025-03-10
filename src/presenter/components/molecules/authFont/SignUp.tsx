@@ -24,7 +24,7 @@ export default function SignUp() {
     console.log(data);
     try {
       setError("");
-      const res = await axios.post("http://localhost:3000/auth/sign-up", data);
+      const res = await axios.post("https://reeduprojectback.onrender.com/auth/sign-up", data);
 
       console.log(res, "res");
         if (res.status === 201) {

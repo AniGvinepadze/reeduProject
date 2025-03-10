@@ -3,9 +3,9 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { arrowLeftIcon } from "../../../assets";
 import { editSign } from "../../../assets";
-import { Suggestion } from "../../../../../context";
+
 import { Cookies } from "react-cookie";
-import { Navigate } from "react-router-dom";
+
 
 export type FormData = {
   title: string;
@@ -15,9 +15,9 @@ export type FormData = {
   _v: number;
   _id: string;
 };
-type SuggestionListProps = {
-  suggestion: Suggestion | undefined;
-};
+// type SuggestionListProps = {
+//   suggestion: Suggestion | undefined;
+// };
 export default function FormFields({ suggestion }: any) {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupSec, setShowPopupSec] = useState(false);
@@ -101,7 +101,7 @@ export default function FormFields({ suggestion }: any) {
     if (suggestion && suggestion._id) {
       try {
         const res = await axios.put(
-          `http://localhost:3000/posts/${suggestion._id}`,
+          `https://reeduprojectback.onrender.com/posts/${suggestion._id}`,
           { ...inputData },
           {
             headers: {
@@ -124,7 +124,7 @@ export default function FormFields({ suggestion }: any) {
   const handleDelete = async (id: string,) => {
     try {
       console.log("clicked");
-      const res = await axios.delete(`http://localhost:3000/posts/${id}`, {
+      const res = await axios.delete(`https://reeduprojectback.onrender.com/posts/${id}`, {
         headers: {
           Authorization: `Bearer ${cookie.get('accessToken')}`,
         },

@@ -29,7 +29,7 @@ export default function DetailComments() {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/comment",
+        "https://reeduprojectback.onrender.com/comment",
         {
           comment: newComment[parentId || 0],
           parentId,
@@ -52,7 +52,7 @@ export default function DetailComments() {
   const getComments = async () => {
     try {
       const response = await axios.get<Comment[]>(
-        "http://localhost:3000/comment",
+        "https://reeduprojectback.onrender.com/comment",
         {
           headers: {
             Authorization: `Bearer ${cookie.get("accessToken")}`,

@@ -5,6 +5,7 @@ import InteractiveElement from "../../atoms/interactiveElement";
 import { cn } from "../../../../utils/twMerge";
 import axios from "axios";
 import { Suggestion, useSuggestions } from "../../../../../context";
+import { Cookies } from "react-cookie";
 
 export default function SuggestionList({
   selectedCategory,
@@ -17,22 +18,37 @@ export default function SuggestionList({
   const navigate = useNavigate();
   const { suggestions } = useSuggestions();
 
-  useEffect(() => {
-    const fetchFeedbacks = async () => {
-      try {
-        const feedbackRes = await axios.get("http://localhost:3000/posts");
-        setFeedback(feedbackRes.data);
-      } catch (error) {
-        console.error("Error fetching feedback:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFeedbacks = async () => {
+  //     try {
+  //       const feedbackRes = await axios.get("https://reeduprojectback.onrender.com/posts");
+  //       setFeedback(feedbackRes.data);
+  //     } catch (error) {
+  //       console.error("Error fetching feedback:", error);
+  //     }
+  //   };
 
-    fetchFeedbacks();
+  //   fetchFeedbacks();
+  // }, []);
+    const cookie = new Cookies();
+
+  const getSuggestion = async () => {
+    const res = await axios.get("https://reeduprojectback.onrender.com/posts", {
+      headers: {
+        Authorization: `Bearer ${cookie.get("accessToken")}`,
+      },
+    });
+    setFeedback(res.data);
+    
+  };
+
+  console.log(feedback)
+
+
+
+  useEffect(() => {
+    getSuggestion();
   }, []);
-
-  useEffect(() => {
-    console.log("Updated suggestions:", suggestions);
-  }, [suggestions]);
 
   const filteredSuggestions = suggestions.filter(
     (suggestion) =>

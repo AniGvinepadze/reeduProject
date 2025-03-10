@@ -1,7 +1,6 @@
 import FeedBackForm from '../components/molecules/newFeedback/FeedBackForm';
-import { formFields } from '../../constants';
 import GoBack from '../components/molecules/newFeedback/GoBack';
-import { addSign } from '../assets';
+
 
 export default function FeedBackPage() {
   return (

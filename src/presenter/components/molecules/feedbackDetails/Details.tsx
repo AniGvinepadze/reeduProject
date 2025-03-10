@@ -1,26 +1,25 @@
 import DetailComments from "./DetailComments";
-import AddComment from "./AddComment";
-import { useSuggestions } from "../../../../../context";
+// import { useSuggestions } from "../../../../../context";
 import FeedBackCommentarsHeader from "../../atoms/FeedBackCommentarsHeader";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { useEffect, useState } from "react";
 
 type DetailsProps = {
-  id: string;
+  id?: string;
 };
 
 export default function Details({ id }: DetailsProps) {
 
-  const { suggestions } = useSuggestions();
+  // const { suggestions } = useSuggestions();
   const cookie = new Cookies();
   const [suggestion, setSuggestion] = useState({});
-  const activeFeedback = suggestions.find(
-    (suggestion) => suggestion._id === id
-  );
+  // const activeFeedback = suggestions.find(
+  //   (suggestion) => suggestion._id === id
+  // );
 
   const getSuggestion = async (id: string) => {
-    const res = await axios.get(`http://localhost:3000/posts/${id}`, {
+    const res = await axios.get(`https://reeduprojectback.onrender.com/posts/${id}`, {
       headers: {
         Authorization: `Bearer ${cookie.get("accessToken")}`,
       },
@@ -29,8 +28,10 @@ export default function Details({ id }: DetailsProps) {
   };
 
   useEffect(() => {
-    getSuggestion(id);
-  }, []);
+    if (id) {
+      getSuggestion(id);
+    }
+  }, [id]);
 
   return (
     <div>

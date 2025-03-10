@@ -44,7 +44,7 @@ export const SuggestionsProvider: React.FC<{
     const fetchPosts = async () => {
       try {
         const response = await axios.get<Suggestion[]>(
-          'http://localhost:3000/posts',
+          'https://reeduprojectback.onrender.com/posts',
           {
             headers: { Authorization: `Bearer ${token}` },
           }

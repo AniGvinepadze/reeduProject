@@ -57,7 +57,7 @@ export default function FeedBackForm() {
     console.log(data);
     const token = cookes.get('accessToken');
     try {
-      await axios.post('http://localhost:3000/posts', data, {
+      await axios.post('https://reeduprojectback.onrender.com/posts', data, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
